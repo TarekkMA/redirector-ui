@@ -39,9 +39,6 @@ func main() {
 	//Run this in the background
 	go http.ListenAndServe(":8877", r)
 	log.Println("d")
-	rr := mux.NewRouter()
-	rr.Use(middleware.Recoverer)
-	rr.Use(middleware.Logger)
 
 	redirects := sync.Map{}
 
@@ -55,7 +52,7 @@ func main() {
 		}
 	})
 
-	rr.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		to, found := redirects.Load(r.Host)
 
 		if !found {
@@ -71,7 +68,7 @@ func main() {
 		return
 	})
 
-	http.ListenAndServe(":80", rr)
+	http.ListenAndServe(":80", nil)
 }
 
 func NewRouter() *mux.Router {
