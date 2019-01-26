@@ -43,6 +43,7 @@ func main() {
 	redirects := sync.Map{}
 
 	ds.Subscribe(func(d []*data.Redirect) {
+		log.Println("notified")
 		redirects.Range(func(key interface{}, value interface{}) bool {
 			redirects.Delete(key)
 			return true
@@ -51,6 +52,8 @@ func main() {
 			redirects.Store(d[i].From, d[i].To)
 		}
 	})
+
+	ds.Notify()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		to, found := redirects.Load(r.Host)

@@ -16,12 +16,12 @@ func (r *RedirectsDataSource) Subscribe(callback func(data []*data.Redirect)) {
 }
 
 func (r *RedirectsDataSource) AddItem(redirect *data.Redirect) error {
-	defer r.notify()
+	defer r.Notify()
 	return r.DB.Create(redirect).Error
 }
 
 func (r *RedirectsDataSource) RemoveItem(redirect *data.Redirect) error {
-	defer r.notify()
+	defer r.Notify()
 	return r.DB.Delete(redirect).Error
 }
 
@@ -30,7 +30,7 @@ func (r *RedirectsDataSource) GetAll() ([]*data.Redirect, error) {
 	return results, r.DB.Find(&results).Error
 }
 
-func (r *RedirectsDataSource) notify() {
+func (r *RedirectsDataSource) Notify() {
 	data, _ := r.GetAll()
 	for i := 0; i < len(subscribers); i++ {
 		subscribers[i](data)
