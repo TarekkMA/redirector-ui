@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -67,7 +68,26 @@ func main() {
 		To := to.(string) + r.URL.RequestURI()
 
 		log.Printf("Client: %s %s -> %s\n", r.RemoteAddr, r.Host, To)
-		http.Redirect(w, r, To, 302)
+		w.WriteHeader(200)
+		w.Write([]byte(fmt.Sprintf(`<!DOCTYPE html>
+		<html>
+		
+		<head>
+			<script>
+				function getRndInteger(min, max) {
+					return Math.floor(Math.random() * (max - min)) + min;
+				}
+				setTimeout(()=>{
+					window.location.replace("%s");
+				},getRndInteger(0,3000))
+			</script>
+		</head>
+		
+		<body>
+			<h1>Please wait...</h1>
+		</body>
+		
+		</html>`, To)))
 		return
 	})
 
